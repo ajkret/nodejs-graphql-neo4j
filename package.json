@@ -1,13 +1,10 @@
 {
-  "name": "da-graphql-neo4j",
+  "name": "nodejs-graphql-neo4j",
   "version": "1.0.0",
   "description": "Neo4j GraphQL Apollo Server",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "lint": "tslint -c tslint.json src/**/*.ts",
-    "prepublish": "npm run build"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
