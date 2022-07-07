@@ -1,5 +1,24 @@
 # Introduction
 
+This will enable a GraphQL server with Neo4J Community
+
+# Building the application
+
+This application requires Docker / Rancher to run.
+
+## Build
+
+Just type (For Rancher with containerd, replace **docker** by **nerdctl**:
+
+    docker compose build
+    
+Then
+
+    docker compose up -d
+
+Follow instructions on how to import the schema to execute queries
+
+
 ## Exporting and Importing Data from Neo4J
 
 Exporting and importing data for Neo4J is turned on. Here's how to export to cypher file using the cypher-shell (https://neo4j.com/download-center/#cypher-shell), which can be used at New4J AuraDB load tool:
