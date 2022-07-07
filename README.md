@@ -4,19 +4,23 @@
 
 Exporting and importing data for Neo4J is turned on. Here's how to export to cypher file using the cypher-shell (https://neo4j.com/download-center/#cypher-shell), which can be used at New4J AuraDB load tool:
 
-    CALL apoc.export.cypher.all("all.cypher",{format: 'cypher-shell'})
+    CALL apoc.export.cypher.all("sample.cypher",{format: 'cypher-shell'})
 
 The file will be generated inside the container. Connect to it and copy to /mnt/neo4j, which is mounted on compose:
 
-    docker exec neo4j cp import/all.cypher /mnt/neo4j
+    docker exec neo4j-data cp import/sample.cypher /mnt/neo4j
 
 Run cypher-shell, and connect to your AuraDB / Neo4J server:
 
     .\cypher-shell.bat -a neo4j+s://xxxxxxx.databases.neo4j.io:7687 -u <user> -p <password>
 
+or
+
+    .\cypher-shell.bat -a bolt://localhost:7687 -u <user> -p <password>
+
 Type the command:
 
-    :source neo4j/install/all.cypher
+    :source neo4j/install/sample.cypher
 
 You can also export AuraDB content from the neo4j Console:
 
@@ -33,12 +37,11 @@ The output will generate the column *'cypherStatements'*, where you can copy and
     curl --request POST \
         --header 'content-type: application/json' \
         --url http://localhost:4000/ \
-        --data '{"query":"query ExampleQuery {\n  deviceModels {\n    created_by_id\n    description\n    device_number\n    id\n    last_modified_by_id\n    name\n    version\n    created_date\n    last_modified_date\n  }\n}"}'
+        --data '{"query":"query Query {\n  movies {\n    released\n    title\n    peopleActedIn {\n      name\n      born\n    }\n  }\n}"}'
 
-Another example, query DeviceModel "MI 632"
+Another example, query Movies where "Keanu" acted
 
     curl --request POST \
         --header 'content-type: application/json' \
         --url http://localhost:4000/ \
-        --data '{"query":"query DeviceModels($where: DeviceModelWhere) {\r\n  deviceModels(where: $where) {\r\n    id\r\n    name\r\n    releasesReleaseToDevice {\r\n      id\r\n      version_number\r\n    }\r\n  }\r\n}","variables":{"where":{"id":"ca78b04e-c33a-460f-8af6-30178cbda6c3"}}}'
-
+        --data '{"query":"query Query($where: PersonWhere) {\n  movies {\n    released\n    title\n    peopleActedIn(where: $where) {\n      name\n      born\n    }\n  }\n}","variables":{"where":{"name_CONTAINS":"Keanu"}}}'
