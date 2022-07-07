@@ -1,0 +1,244 @@
+type CommunicationChannel {
+	consistsOfPhysicalChannels: [PhysicalChannel!]! @relationship(type: "CONSISTS_OF", direction: OUT)
+	longname: String!
+	overwritesProtocolParameters: [ProtocolParameter!]! @relationship(type: "OVERWRITES", direction: OUT, properties: "OverwritesProperties")
+	shortname: String!
+	usesProtocolSets: [ProtocolSet!]! @relationship(type: "USES", direction: OUT)
+	usesecus: [ECU!]! @relationship(type: "USES", direction: OUT)
+	vehicleDefinitionsConsistsOf: [VehicleDefinition!]! @relationship(type: "CONSISTS_OF", direction: IN)
+}
+
+type DTCDefinition {
+	displayCode: String
+	displayName: String!
+	ecuGroupsContains: [ECUGroup!]! @relationship(type: "CONTAINS", direction: IN)
+	ecuscontains: [ECU!]! @relationship(type: "CONTAINS", direction: IN)
+	troubleCode: String!
+}
+
+type DataTransformation {
+	bitLength: BigInt
+	consistsOfValues: [Value!]! @relationship(type: "CONSISTS_OF", direction: OUT)
+	conversion: String!
+	dataType: String!
+	denominator: String
+	displayRadix: String
+	encoding: String!
+	enumerator: String
+	isHighLowByteOrder: Boolean
+	longname: String!
+	maxLength: BigInt
+	minLength: BigInt
+	parameterProvidersUses: [ParameterProvider!]! @relationship(type: "USES", direction: IN)
+	physicalDataType: String!
+	protocolParametersUses: [ProtocolParameter!]! @relationship(type: "USES", direction: IN)
+	shortname: String!
+	termination: String
+	type: String!
+	usesUnits: [Unit!]! @relationship(type: "USES", direction: OUT)
+}
+
+type ECU {
+	belongsToecuGroups: [ECUGroup!]! @relationship(type: "BELONGS_TO", direction: OUT)
+	communicationChannelsUses: [CommunicationChannel!]! @relationship(type: "USES", direction: IN)
+	containsServices: [Service!]! @relationship(type: "CONTAINS", direction: OUT)
+	containsdtcDefinitions: [DTCDefinition!]! @relationship(type: "CONTAINS", direction: OUT)
+	ecussibling: [ECU!]! @relationship(type: "SIBLING", direction: IN)
+	longname: String!
+	shortname: String!
+	siblingecus: [ECU!]! @relationship(type: "SIBLING", direction: OUT)
+	usesMemorySections: [MemorySection!]! @relationship(type: "USES", direction: OUT)
+}
+
+type ECUGroup {
+	containsdtcDefinitions: [DTCDefinition!]! @relationship(type: "CONTAINS", direction: OUT)
+	ecusbelongsTo: [ECU!]! @relationship(type: "BELONGS_TO", direction: IN)
+	longname: String!
+	shortname: String!
+}
+
+type FlashDataBlock {
+	flashDataDescriptionsConsistsOf: [FlashDataDescription!]! @relationship(type: "CONSISTS_OF", direction: IN)
+	longname: String!
+	memorySegmentsConsistsOf: [MemorySegment!]! @relationship(type: "CONSISTS_OF", direction: IN)
+	shortname: String!
+	type: String!
+}
+
+type FlashDataDescription {
+	addressLength: BigInt!
+	consistsOfFlashDataBlocks: [FlashDataBlock!]! @relationship(type: "CONSISTS_OF", direction: OUT)
+	format: String!
+	longname: String!
+	shortname: String!
+	size: BigInt!
+	type: String!
+}
+
+type MemorySection {
+	consistsOfMemorySegments: [MemorySegment!]! @relationship(type: "CONSISTS_OF", direction: OUT)
+	ecususes: [ECU!]! @relationship(type: "USES", direction: IN)
+	longname: String!
+	shortname: String!
+}
+
+type MemorySegment {
+	compressedSize: String!
+	consistsOfFlashDataBlocks: [FlashDataBlock!]! @relationship(type: "CONSISTS_OF", direction: OUT)
+	encryptionCompressMethod: String
+	encryptionCompressMethodType: String
+	longname: String!
+	memorySectionsConsistsOf: [MemorySection!]! @relationship(type: "CONSISTS_OF", direction: IN)
+	shortname: String!
+	size: String!
+	startAddress: String!
+}
+
+interface OverwritesProperties @relationshipProperties {
+	value: String
+}
+
+type Parameter {
+	name: String!
+	parameterProvidersImplements: [ParameterProvider!]! @relationship(type: "IMPLEMENTS", direction: IN)
+	requestsConsistsOf: [Request!]! @relationship(type: "CONSISTS_OF", direction: IN)
+	responsesConsistsOf: [Response!]! @relationship(type: "CONSISTS_OF", direction: IN)
+}
+
+type ParameterProvider {
+	bit: BigInt!
+	bitLength: BigInt!
+	byte: BigInt!
+	defaultValue: String
+	implementsParameters: [Parameter!]! @relationship(type: "IMPLEMENTS", direction: OUT)
+	isWeakLink: Boolean
+	longname: String!
+	paramType: String!
+	requestProvidersConsistsOf: [RequestProvider!]! @relationship(type: "CONSISTS_OF", direction: IN)
+	responseProvidersConsistsOf: [ResponseProvider!]! @relationship(type: "CONSISTS_OF", direction: IN)
+	semantic: String
+	shortname: String!
+	type: String!
+	usesDataTransformations: [DataTransformation!]! @relationship(type: "USES", direction: OUT)
+}
+
+type PhysicalChannel {
+	communicationChannelsConsistsOf: [CommunicationChannel!]! @relationship(type: "CONSISTS_OF", direction: IN)
+	consistsOfPins: [Pin!]! @relationship(type: "CONSISTS_OF", direction: OUT)
+	longname: String!
+	physicalLinkType: String!
+	shortname: String!
+}
+
+type PhysicalDimension {
+	longname: String!
+	shortname: String!
+	timeExp: BigInt!
+	unitsUses: [Unit!]! @relationship(type: "USES", direction: IN)
+}
+
+type Pin {
+	longname: String!
+	physicalChannelsConsistsOf: [PhysicalChannel!]! @relationship(type: "CONSISTS_OF", direction: IN)
+	pinNumber: String!
+	pinType: String!
+	shortname: String!
+}
+
+type ProtocolParameter {
+	communicationChannelsOverwrites: [CommunicationChannel!]! @relationship(type: "OVERWRITES", direction: IN, properties: "OverwritesProperties")
+	consistsOfProtocolParameters: [ProtocolParameter!]! @relationship(type: "CONSISTS_OF", direction: OUT)
+	cpType: String!
+	cpUsage: String!
+	defaultValue: String
+	longname: String!
+	paramClass: String!
+	protocolParametersConsistsOf: [ProtocolParameter!]! @relationship(type: "CONSISTS_OF", direction: IN)
+	protocolSet: String!
+	protocolSetsContains: [ProtocolSet!]! @relationship(type: "CONTAINS", direction: IN)
+	shortname: String!
+	usesDataTransformations: [DataTransformation!]! @relationship(type: "USES", direction: OUT)
+}
+
+type ProtocolSet {
+	communicationChannelsUses: [CommunicationChannel!]! @relationship(type: "USES", direction: IN)
+	consistsOfServiceProviders: [ServiceProvider!]! @relationship(type: "CONSISTS_OF", direction: OUT)
+	containsProtocolParameters: [ProtocolParameter!]! @relationship(type: "CONTAINS", direction: OUT)
+	longname: String!
+	shortname: String!
+}
+
+type Request {
+	consistsOfParameters: [Parameter!]! @relationship(type: "CONSISTS_OF", direction: OUT)
+	name: String!
+	requestProvidersImplements: [RequestProvider!]! @relationship(type: "IMPLEMENTS", direction: IN)
+	servicesConsistsOf: [Service!]! @relationship(type: "CONSISTS_OF", direction: IN)
+}
+
+type RequestProvider {
+	consistsOfParameterProviders: [ParameterProvider!]! @relationship(type: "CONSISTS_OF", direction: OUT)
+	implementsRequests: [Request!]! @relationship(type: "IMPLEMENTS", direction: OUT)
+	longname: String!
+	serviceProvidersConsistsOf: [ServiceProvider!]! @relationship(type: "CONSISTS_OF", direction: IN)
+	shortname: String!
+}
+
+type Response {
+	consistsOfParameters: [Parameter!]! @relationship(type: "CONSISTS_OF", direction: OUT)
+	name: String!
+	responseProvidersImplements: [ResponseProvider!]! @relationship(type: "IMPLEMENTS", direction: IN)
+	servicesConsistsOf: [Service!]! @relationship(type: "CONSISTS_OF", direction: IN)
+}
+
+type ResponseProvider {
+	consistsOfParameterProviders: [ParameterProvider!]! @relationship(type: "CONSISTS_OF", direction: OUT)
+	implementsResponses: [Response!]! @relationship(type: "IMPLEMENTS", direction: OUT)
+	longname: String!
+	serviceProvidersConsistsOf: [ServiceProvider!]! @relationship(type: "CONSISTS_OF", direction: IN)
+	shortname: String!
+	type: String!
+}
+
+type Service {
+	consistsOfRequests: [Request!]! @relationship(type: "CONSISTS_OF", direction: OUT)
+	consistsOfResponses: [Response!]! @relationship(type: "CONSISTS_OF", direction: OUT)
+	ecuscontains: [ECU!]! @relationship(type: "CONTAINS", direction: IN)
+	name: String!
+	serviceProvidersImplements: [ServiceProvider!]! @relationship(type: "IMPLEMENTS", direction: IN)
+}
+
+type ServiceProvider {
+	addressing: String!
+	consistsOfRequestProviders: [RequestProvider!]! @relationship(type: "CONSISTS_OF", direction: OUT)
+	consistsOfResponseProviders: [ResponseProvider!]! @relationship(type: "CONSISTS_OF", direction: OUT)
+	implementsServices: [Service!]! @relationship(type: "IMPLEMENTS", direction: OUT)
+	isExecutable: Boolean!
+	longname: String!
+	protocolSetsConsistsOf: [ProtocolSet!]! @relationship(type: "CONSISTS_OF", direction: IN)
+	semantic: String!
+	shortname: String!
+	transmissionMode: String!
+}
+
+type Unit {
+	dataTransformationsUses: [DataTransformation!]! @relationship(type: "USES", direction: IN)
+	displayName: String!
+	longname: String!
+	shortname: String!
+	siFactor: Float
+	siOffset: Float
+	usesPhysicalDimensions: [PhysicalDimension!]! @relationship(type: "USES", direction: OUT)
+}
+
+type Value {
+	dataTransformationsConsistsOf: [DataTransformation!]! @relationship(type: "CONSISTS_OF", direction: IN)
+	key: String!
+	ti: String
+	value: String!
+}
+
+type VehicleDefinition {
+	consistsOfCommunicationChannels: [CommunicationChannel!]! @relationship(type: "CONSISTS_OF", direction: OUT)
+	longname: String!
+	shortname: String!
+}
